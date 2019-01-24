@@ -34,8 +34,8 @@
   (send socket host port (json/write-str obj)))
 
 (defn orecv
-  [socket]
-  (json/read-str (recv socket)
+  []
+  (json/read-str (recv sk)
                  :key-fn keyword))
 
 (defn obroadcast

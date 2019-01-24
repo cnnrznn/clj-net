@@ -1,26 +1,18 @@
 (ns clj-net.broadcast
-  (require [clj-net.core :refer :all]))
+  (require [clj-net.core :refer :all]
+           [clojure.pprint :as pp]))
 
 (defn p1
   [addrs]
-  (loop [msgs []]
-      msgs
-      (recur (conj msgs (orecv))))))
+  (loop [msgs #{}]
+    (pp/pprint msgs)
+    (recur (conj msgs (orecv)))))
 
-(defn p2
-  [addrs msgs]
-  (recur addrs (into msgs (orecv))))
-
-(defn p3
-  [addrs msgs]
-  (recur addrs (into msgs (orecv))))
-
-(defn bracha_recv_broadcast
-  [addrs]
-  (let [m1 (p1 addrs)
-        m2 (p2 addrs m1)
-        result (p3 addrs m2)]
-    result))
+(defn bracha-broadcast
+  ([addrs obj]
+    (obroadcast addrs obj)
+    (bracha-broadcast addrs))
+  ([addrs]))
 
 (defn -main
   []
@@ -29,4 +21,7 @@
                {:host "localhost" :port 3333}
                {:host "localhost" :port 3333}]]
     (obroadcast addrs {:type :initial :v 0})
-    (bracha_recv_broadcast addrs)))
+    (obroadcast addrs {:type :initial :v 1})
+    (obroadcast addrs {:type :echo :v 0})
+    (obroadcast addrs {:type :initial :v 1})
+    (p1 addrs)))
