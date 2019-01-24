@@ -2,24 +2,31 @@
   (require [clj-net.core :refer :all]))
 
 (defn p1
-  [socket addrs]
+  [addrs]
   (loop [msgs []]
-    (pprint msgs)
-    (if (>= (count msgs) 4)
       msgs
-      (recur (conj msgs (orecv socket))))))
+      (recur (conj msgs (orecv))))))
 
 (defn p2
-  [socket addrs msgs]
-  (recur socket addrs (into msgs (orecv socket))))
+  [addrs msgs]
+  (recur addrs (into msgs (orecv))))
 
 (defn p3
-  [socket addrs msgs]
-  (recur socket addrs (into msgs (orecv socket))))
+  [addrs msgs]
+  (recur addrs (into msgs (orecv))))
 
 (defn bracha_recv_broadcast
-  [socket addrs msg]
-  (let [m1 (p1 socket addrs)
-        m2 (p2 socket addrs m1)
-        result (p3 socket addrs m2)]
+  [addrs]
+  (let [m1 (p1 addrs)
+        m2 (p2 addrs m1)
+        result (p3 addrs m2)]
     result))
+
+(defn -main
+  []
+  (let [addrs [{:host "localhost" :port 3333}
+               {:host "localhost" :port 3333}
+               {:host "localhost" :port 3333}
+               {:host "localhost" :port 3333}]]
+    (obroadcast addrs {:type :initial :v 0})
+    (bracha_recv_broadcast addrs)))

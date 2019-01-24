@@ -39,14 +39,5 @@
                  :key-fn keyword))
 
 (defn obroadcast
-  [socket addrs obj]
-  (broadcast socket addrs (json/write-str obj)))
-
-(defn -main
-  []
-  (let [addrs [{:host "localhost" :port 3333}
-                 {:host "localhost" :port 3333}
-                 {:host "localhost" :port 3333}
-                 {:host "localhost" :port 3333}]]
-    (broadcast sk addrs {:type :initial :v 0})
-    (pprint (p1 sk addrs))))
+  [addrs obj]
+  (broadcast sk addrs (json/write-str obj)))
