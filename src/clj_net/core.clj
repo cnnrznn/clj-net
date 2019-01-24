@@ -1,5 +1,6 @@
 (ns clj-net.core
-  (require [clojure.pprint :refer [pprint]]))
+  (require [clojure.pprint :refer [pprint]]
+           [clojure.data.json :as json]))
 
 (import '[java.net DatagramSocket
                    DatagramPacket
@@ -17,8 +18,8 @@
 
 (defn recv
   [socket]
-  (let [buffer (byte-array 1024)
-        packet (DatagramPacket. buffer 1024)]
+  (let [buffer (byte-array 2048)
+        packet (DatagramPacket. buffer 2048)]
     (.receive socket packet)
     (String. (.getData packet) 0 (.getLength packet))))
 
@@ -28,10 +29,47 @@
                 (send socket host port msg))
               addrs)))
 
+(defn osend
+  [socket host port obj]
+  (send socket host port (json/write-str obj)))
+
+(defn orecv
+  [socket]
+  (json/read-str (recv socket)
+                 :key-fn keyword))
+
+(defn obroadcast
+  [socket addrs obj]
+  (broadcast socket addrs (json/write-str obj)))
+
+(defn p1
+  [socket addrs]
+  (loop [msgs []]
+    (pprint msgs)
+    (if (>= (count msgs) 4)
+      msgs
+      (recur (conj msgs (orecv socket))))))
+
+(defn p2
+  [socket addrs msgs]
+  (recur socket addrs (into msgs (orecv socket))))
+
+(defn p3
+  [socket addrs msgs]
+  (recur socket addrs (into msgs (orecv socket))))
+
+(defn bracha_recv_broadcast
+  [socket addrs msg]
+  (let [m1 (p1 socket addrs)
+        m2 (p2 socket addrs m1)
+        result (p3 socket addrs m2)]
+    result))
+
 (defn -main
   []
-  (broadcast sk [{:host "localhost" :port 3333}
-                 {:host "localhost" :port 3333}]
-                "Hello, self!")
-  (pprint (recv sk))
-  (pprint (recv sk)))
+  (let [addrs [{:host "localhost" :port 3333}
+                 {:host "localhost" :port 3333}
+                 {:host "localhost" :port 3333}
+                 {:host "localhost" :port 3333}]]
+    (broadcast sk addrs {:type :initial :v 0})
+    (pprint (p1 sk addrs))))
