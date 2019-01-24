@@ -15,12 +15,6 @@
         packet (DatagramPacket. payload length address)]
     (.send socket packet)))
 
-(defn broadcast
-  [socket addrs msg]
-  (doall (map (fn [{:keys [host port]}]
-                (send socket host port msg))
-              addrs)))
-
 (defn recv
   [socket]
   (let [buffer (byte-array 1024)
@@ -28,7 +22,16 @@
     (.receive socket packet)
     (String. (.getData packet) 0 (.getLength packet))))
 
+(defn broadcast
+  [socket addrs msg]
+  (doall (map (fn [{:keys [host port]}]
+                (send socket host port msg))
+              addrs)))
+
 (defn -main
   []
-  (broadcast sk [{:host "localhost" :port 3333}] "Hello, self!")
+  (broadcast sk [{:host "localhost" :port 3333}
+                 {:host "localhost" :port 3333}]
+                "Hello, self!")
+  (pprint (recv sk))
   (pprint (recv sk)))
