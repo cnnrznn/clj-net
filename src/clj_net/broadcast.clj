@@ -12,6 +12,7 @@
 (defn phase1
   [addrs]
   (loop [msgs #{}]
+    (pp/pprint msgs)
     (if (proceed? (count addrs) (count msgs))
       msgs
       (recur (conj msgs (util/validate msgs (orecv)))))))
