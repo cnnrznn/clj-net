@@ -12,7 +12,7 @@
 (defn phase1
   [addrs]
   (loop [msgs #{}]
-    (if (proceed? msgs)
+    (if (proceed? (count addrs) (count msgs))
       msgs
       (recur (conj msgs (util/validate msgs (orecv)))))))
 
