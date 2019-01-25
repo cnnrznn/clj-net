@@ -3,6 +3,16 @@
                     [util :as util]]
            [clojure.pprint :as pp]))
 
+(defn n-f
+  [n]
+  (let [f (floor (/ (- n 1) 3))]
+    (- n f)))
+
+(defn f-1
+  [n]
+  (let [f (floor (/ (- n 1) 3))]
+    (+ f 1)))
+
 (defn proceed?
   [n m]
   (let [f (/ (- n 1) 3)
@@ -13,9 +23,12 @@
   [addrs]
   (loop [msgs #{}]
     (pp/pprint msgs)
-    (if (proceed? (count addrs) (count msgs))
+    (let [proceed (cond (>= (count (filter)) 1))]
+                        ;(>= (count (filter)) (n-f (count addrs)))
+                        ;(>= (count (filter)) (f-1 (count addrs))))]
+    (if proceed
       msgs
-      (recur (conj msgs (util/validate msgs (orecv)))))))
+      (recur (conj msgs (util/validate msgs (orecv))))))))
 
 (defn bracha-broadcast
   ([addrs obj]
