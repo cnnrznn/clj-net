@@ -3,11 +3,18 @@
                     [util :as util]]
            [clojure.pprint :as pp]))
 
+(defn proceed?
+  [n m]
+  (let [f (/ (- n 1) 3)
+        thresh (- n f)]
+    (>= m thresh)))
+
 (defn phase1
   [addrs]
   (loop [msgs #{}]
-    (pp/pprint msgs)
-    (recur (conj msgs (util/validate msgs (orecv))))))
+    (if (proceed? msgs)
+      msgs
+      (recur (conj msgs (util/validate msgs (orecv)))))))
 
 (defn bracha-broadcast
   ([addrs obj]
@@ -19,10 +26,10 @@
 
 (defn -main
   ([si v]
-    (let [addrs [{:host "" :port 3333}
-                 {:host "" :port 3333}
-                 {:host "" :port 3333}
-                 {:host "" :port 3333}]
+    (let [addrs [{:host "100.10.10.10" :port 3333}
+                 {:host "100.10.10.11" :port 3333}
+                 {:host "100.10.10.12" :port 3333}
+                 {:host "100.10.10.13" :port 3333}]
           i (util/parse-int si)]
     (if (= 0 i)
       (bracha-broadcast addrs {:type :initial
