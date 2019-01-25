@@ -31,10 +31,10 @@
                  {:host "100.10.10.12" :port 3333}
                  {:host "100.10.10.13" :port 3333}]
           i (util/parse-int si)]
-    (if (= 0 i)
-      (bracha-broadcast addrs {:type :initial
-                               :v v
-                               :id i
-                               :r 0})
-      (bracha-broadcast addrs))
-    )))
+      (pprint (format "I am process %d" i))
+      (if (= 0 i)
+        (bracha-broadcast addrs {:type :initial
+                                 :v v
+                                 :id i
+                                 :r 0})
+        (bracha-broadcast addrs)))))
