@@ -23,7 +23,7 @@
   [addrs]
   (loop [msgs #{}]
     (pp/pprint msgs)
-    (let [proceed (cond (>= (count (filter)) 1))]
+    (let [proceed (and (>= (count (filter)) 1))]
                         ;(>= (count (filter)) (n-f (count addrs)))
                         ;(>= (count (filter)) (f-1 (count addrs))))]
     (if proceed
