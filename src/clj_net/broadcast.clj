@@ -15,7 +15,7 @@
 
 (defn initial
   [coll]
-  (filter (fn [x] (= (:type x) :initial))
+  (filter (fn [x] (= (:type x) "initial"))
           coll))
 
 (defn proceed?
@@ -53,7 +53,7 @@
           i (util/parse-int si)]
       (pp/pprint (format "I am process %d" i))
       (if (= 0 i)
-        (bracha-broadcast addrs {:type :initial
+        (bracha-broadcast addrs {:type "initial"
                                  :v v
                                  :id i
                                  :r 0})
