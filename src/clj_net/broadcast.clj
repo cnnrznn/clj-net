@@ -63,14 +63,20 @@
     (:v msg)))
 
 (defn bracha-broadcast
-  ([addrs obj]
+  ([i addrs obj]
     (obroadcast addrs obj)
-    (bracha-broadcast addrs))
-  ([addrs]
+    (bracha-broadcast i addrs))
+  ([i addrs]
     (let [m1 (phase1 addrs)
-          _ (nil)                       ; broadcast echo
+          _ (obroadcast addrs {:type "echo"
+                               :v (:v (first m1))
+                               :id i
+                               :r 0})
           m2 (phase2 addrs m1)
-          _ (nil)                       ; broadcast ready
+          _ (obroadcast addrs {:type "ready"
+                               :v (:v (first m2))
+                               :id i
+                               :r 0})
           m3 (phase3 addrs m2)]
       (accept m3))))
 
@@ -83,8 +89,8 @@
           i (util/parse-int si)]
       (pp/pprint (format "I am process %d" i))
       (if (= 0 i)
-        (bracha-broadcast addrs {:type "initial"
-                                 :v v
-                                 :id i
-                                 :r 0})
-        (bracha-broadcast addrs)))))
+        (bracha-broadcast i addrs {:type "initial"
+                                   :v v
+                                   :id i
+                                   :r 0})
+        (bracha-broadcast i addrs)))))
