@@ -44,15 +44,15 @@
 
 (defn phase2
   [addrs msgs]
-  (let [proceed (or (>= (count (echo msgs) (n-f (count addrs))))
-                    (>= (count (ready msgs) (f-1 (count addrs)))))]
+  (let [proceed (or (>= (count (echo msgs)) (n-f (count addrs)))
+                    (>= (count (ready msgs)) (f-1 (count addrs))))]
     (if proceed
       msgs
       (recur addrs (conj msgs (util/validate msgs (orecv)))))))
 
 (defn phase3
   [addrs msgs]
-  (let [proceed (>= (count (ready msgs) (n-f (count addrs))))]
+  (let [proceed (>= (count (ready msgs)) (n-f (count addrs)))]
     (if proceed
       msgs
       (recur addrs (conj msgs (util/validate msgs (orecv)))))))
