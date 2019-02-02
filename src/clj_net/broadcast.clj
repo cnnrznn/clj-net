@@ -33,8 +33,6 @@
 (defn phase1
   [addrs]
   (loop [msgs #{}]
-    (pp/pprint msgs)
-    (pp/pprint (initial msgs))
     (let [proceed (or (>= (count (initial msgs)) 1)
                       (>= (count (echo msgs)) (n-f (count addrs)))
                       (>= (count (ready msgs)) (f-1 (count addrs))))]
@@ -68,16 +66,19 @@
     (bracha-broadcast i addrs))
   ([i addrs]
     (let [m1 (phase1 addrs)
+          _ (pp/pprint m1)
           _ (obroadcast addrs {:type "echo"
                                :v (:v (first m1))
                                :id i
                                :r 0})
           m2 (phase2 addrs m1)
+          _ (pp/pprint m2)
           _ (obroadcast addrs {:type "ready"
                                :v (:v (first m2))
                                :id i
                                :r 0})
-          m3 (phase3 addrs m2)]
+          m3 (phase3 addrs m2)
+          _ (pp/pprint m3)]
       (accept m3))))
 
 (defn -main
