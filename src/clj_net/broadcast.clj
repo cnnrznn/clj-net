@@ -35,12 +35,12 @@
   (loop [msgs #{}]
     (pp/pprint msgs)
     (pp/pprint (initial msgs))
-    (let [proceed (and (>= (count (initial msgs)) 1)
-                       (>= (count (echo msgs)) (n-f (count addrs)))
-                       (>= (count (ready msgs)) (f-1 (count addrs))))]
-    (if proceed
-      msgs
-      (recur (conj msgs (util/validate msgs (orecv))))))))
+    (let [proceed (or (>= (count (initial msgs)) 1)
+                      (>= (count (echo msgs)) (n-f (count addrs)))
+                      (>= (count (ready msgs)) (f-1 (count addrs))))]
+      (if proceed
+        msgs
+        (recur (conj msgs (util/validate msgs (orecv))))))))
 
 (defn bracha-broadcast
   ([addrs obj]
