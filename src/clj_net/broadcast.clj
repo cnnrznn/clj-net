@@ -13,6 +13,11 @@
   (let [f (quot (- n 1) 3)]
     (+ f 1)))
 
+(defn initial
+  [coll]
+  (filter (fn [x] (= (:type x) :initial))
+          coll))
+
 (defn proceed?
   [n m]
   (let [f (/ (- n 1) 3)
@@ -23,7 +28,7 @@
   [addrs]
   (loop [msgs #{}]
     (pp/pprint msgs)
-    (let [proceed (and (>= (count (filter)) 1))]
+    (let [proceed (and (>= (count (initial msgs)) 1))]
                         ;(>= (count (filter)) (n-f (count addrs)))
                         ;(>= (count (filter)) (f-1 (count addrs))))]
     (if proceed
