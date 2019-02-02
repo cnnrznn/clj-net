@@ -28,6 +28,7 @@
   [addrs]
   (loop [msgs #{}]
     (pp/pprint msgs)
+    (pp/pprint (initial msgs))
     (let [proceed (and (>= (count (initial msgs)) 1))]
                         ;(>= (count (filter)) (n-f (count addrs)))
                         ;(>= (count (filter)) (f-1 (count addrs))))]
