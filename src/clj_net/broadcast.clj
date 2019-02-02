@@ -13,25 +13,31 @@
   (let [f (quot (- n 1) 3)]
     (+ f 1)))
 
-(defn initial
-  [coll]
-  (filter (fn [x] (= (:type x) "initial"))
-          coll))
+(defn mfilter
+  [msgs typ]
+  (filter (fn [x] (= (:type x) typ))
+          msgs))
 
-(defn proceed?
-  [n m]
-  (let [f (/ (- n 1) 3)
-        thresh (- n f)]
-    (>= m thresh)))
+(defn initial
+  [msgs]
+  (mfilter msgs "initial"))
+
+(defn echo
+  [msgs]
+  (mfilter msgs "echo"))
+
+(defn ready
+  [msgs]
+  (mfilter msgs "ready"))
 
 (defn phase1
   [addrs]
   (loop [msgs #{}]
     (pp/pprint msgs)
     (pp/pprint (initial msgs))
-    (let [proceed (and (>= (count (initial msgs)) 1))]
-                        ;(>= (count (filter)) (n-f (count addrs)))
-                        ;(>= (count (filter)) (f-1 (count addrs))))]
+    (let [proceed (and (>= (count (initial msgs)) 1)
+                       (>= (count (echo msgs)) (n-f (count addrs)))
+                       (>= (count (ready msgs)) (f-1 (count addrs))))]
     (if proceed
       msgs
       (recur (conj msgs (util/validate msgs (orecv))))))))
