@@ -5,12 +5,12 @@
 
 (defn n-f
   [n]
-  (let [f (floor (/ (- n 1) 3))]
+  (let [f (quot (- n 1) 3)]
     (- n f)))
 
 (defn f-1
   [n]
-  (let [f (floor (/ (- n 1) 3))]
+  (let [f (quot (- n 1) 3)]
     (+ f 1)))
 
 (defn proceed?
