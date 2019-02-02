@@ -57,13 +57,22 @@
       msgs
       (recur addrs (conj msgs (util/validate msgs (orecv)))))))
 
+(defn accept
+  [msgs]
+  (let [msg (first (ready msgs))]
+    (:v msg)))
+
 (defn bracha-broadcast
   ([addrs obj]
     (obroadcast addrs obj)
     (bracha-broadcast addrs))
   ([addrs]
-    (let [m1 (phase1 addrs)]
-      m1)))
+    (let [m1 (phase1 addrs)
+          _ (nil)                       ; broadcast echo
+          m2 (phase2 addrs m1)
+          _ (nil)                       ; broadcast ready
+          m3 (phase3 addrs m2)]
+      (accept m3))))
 
 (defn -main
   ([si v]
