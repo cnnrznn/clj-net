@@ -36,7 +36,9 @@
         match_ty (mfilter match_id :type (:type new))
         match_r  (mfilter match_ty :r (:r new))
         matches match_r]
-    (if (>= (count matches) 1)
+    (if (or (>= (count matches) 1)
+            (and (= "initial" (:type new))
+                 (not= 0 (:id new))))
       nil
       new)))
 
