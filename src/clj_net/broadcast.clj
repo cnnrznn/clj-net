@@ -30,6 +30,10 @@
   [msgs]
   (mfilter msgs "ready"))
 
+(defn validate
+  [msgs new]
+  new)
+
 (defn phase1
   [addrs]
   (loop [msgs #{}]
@@ -38,7 +42,7 @@
                       (>= (count (ready msgs)) (f-1 (count addrs))))]
       (if proceed
         msgs
-        (recur (conj msgs (util/validate msgs (orecv))))))))
+        (recur (conj msgs (validate msgs (orecv))))))))
 
 (defn phase2
   [addrs msgs]
@@ -46,14 +50,14 @@
                     (>= (count (ready msgs)) (f-1 (count addrs))))]
     (if proceed
       msgs
-      (recur addrs (conj msgs (util/validate msgs (orecv)))))))
+      (recur addrs (conj msgs (validate msgs (orecv)))))))
 
 (defn phase3
   [addrs msgs]
   (let [proceed (>= (count (ready msgs)) (n-f (count addrs)))]
     (if proceed
       msgs
-      (recur addrs (conj msgs (util/validate msgs (orecv)))))))
+      (recur addrs (conj msgs (validate msgs (orecv)))))))
 
 (defn accept
   [msgs]
