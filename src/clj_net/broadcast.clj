@@ -14,21 +14,21 @@
     (+ f 1)))
 
 (defn mfilter
-  [msgs typ]
-  (filter (fn [x] (= (:type x) typ))
+  [msgs k v]
+  (filter (fn [x] (= (k x) v))
           msgs))
 
 (defn initial
   [msgs]
-  (mfilter msgs "initial"))
+  (mfilter msgs :type "initial"))
 
 (defn echo
   [msgs]
-  (mfilter msgs "echo"))
+  (mfilter msgs :type "echo"))
 
 (defn ready
   [msgs]
-  (mfilter msgs "ready"))
+  (mfilter msgs :type "ready"))
 
 (defn validate
   [msgs new]
