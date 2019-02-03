@@ -32,7 +32,13 @@
 
 (defn validate
   [msgs new]
-  new)
+  (let [match_id (mfilter msgs :id (:id new))
+        match_ty (mfilter match_id :type (:type new))
+        match_r  (mfilter match_ty :r (:r new))
+        matches match_r]
+    (if (>= (count matches) 1)
+      nil
+      new)))
 
 (defn phase1
   [addrs]
