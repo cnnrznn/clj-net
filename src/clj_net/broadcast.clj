@@ -38,7 +38,7 @@
   ([addrs i r]
     (loop [msgs #{}]
       (pp/pprint msgs)
-      (pp/pprint)
+      (pp/pprint "")
       (recur (conj msgs (validate msgs (orecv)))))))
 
 (defn -main
