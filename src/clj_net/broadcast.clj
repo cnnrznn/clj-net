@@ -33,10 +33,13 @@
     (obroadcast addrs {:owner i
                        :sender i
                        :round r
-                       :value v}))
+                       :value v})
+    (zcast addrs i r))
   ([addrs i r]
-    (let [msgs (validate #{} (orecv))]
-      (pp/pprint msgs))))
+    (loop [msgs #{}]
+      (pp/pprint msgs)
+      (pp/pprint)
+      (recur addrs i r (conf msgs (validate msgs (orecv)))))))
 
 (defn -main
   [id_str r_str]
