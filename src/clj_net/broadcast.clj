@@ -39,7 +39,7 @@
     (loop [msgs #{}]
       (pp/pprint msgs)
       (pp/pprint)
-      (recur addrs i r (conf msgs (validate msgs (orecv)))))))
+      (recur addrs i r (conj msgs (validate msgs (orecv)))))))
 
 (defn -main
   [id_str r_str]
