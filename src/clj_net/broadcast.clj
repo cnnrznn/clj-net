@@ -38,7 +38,7 @@
     (let [msgs (validate #{} (orecv))]
       (pp/pprint msgs))))
 
-(def -main
+(defn -main
   [id_str r_str]
   (let [id (util/parse-int id_str)
         r (util/parse-int r_str)
