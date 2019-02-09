@@ -36,16 +36,16 @@
     (obroadcast addrs (assoc new :sender id))))
 
 (defn terminate?
-  [addrs msgs]
+  [n msgs]
   (let [freq (frequencies (map :value msgs))]
     (pp/pprint freq)
     (first (filter (fn [x] (pp/pprint x)
-                           (>= (f-1 addrs) (nth x 1)))
+                           (>= (f-1 n) (nth x 1)))
                    freq))))
 
 (defn value
-  [msgs]
-  (:value (terminate? msgs)))
+  [n msgs]
+  (:value (terminate? n msgs)))
 
 (defn zcast
   ([addrs i r v]
@@ -56,8 +56,8 @@
     (zcast addrs i r))
   ([addrs i r]
     (loop [msgs #{}]
-      (if (terminate? addrs msgs)
-        (value msgs)
+      (if (terminate? (count addrs) msgs)
+        (value (count addrs) msgs)
         (let [msg (validate r msgs (orecv))]
           (when msg
             (echo addrs i msg))
