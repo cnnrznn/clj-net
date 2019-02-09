@@ -28,6 +28,11 @@
       nil
       new)))
 
+(defn hanldle-new
+  [addrs id new]
+  (when (= (:owner new) (:sender new))
+    (obroadcast addrs (assoc new :sender id))))
+
 (defn zcast
   ([addrs i r v]
     (obroadcast addrs {:owner i
@@ -40,9 +45,8 @@
       (pp/pprint msgs)
       (pp/pprint "")
       (let [msg (validate msgs (orecv))]
-        (case msg
-          nil (recur msgs)
-          (recur (conj msgs msg)))))))
+        (handle-new msgs msg)
+        (recur (conj msgs msg))))))
 
 (defn -main
   [id_str r_str]
