@@ -39,7 +39,10 @@
     (loop [msgs #{}]
       (pp/pprint msgs)
       (pp/pprint "")
-      (recur (conj msgs (validate msgs (orecv)))))))
+      (let [msg (validate msgs (orecv))]
+        (case msg
+          nil (recur msgs)
+          (recur (conj msgs msg))))))
 
 (defn -main
   [id_str r_str]
