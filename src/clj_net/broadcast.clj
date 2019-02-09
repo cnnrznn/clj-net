@@ -54,15 +54,12 @@
     (zcast addrs i r))
   ([addrs i r]
     (loop [msgs #{}]
-      (pp/pprint msgs)
-      (pp/pprint "")
       (if (terminate? addrs msgs)
         (value msgs)
         (let [msg (validate r msgs (orecv))]
-          (if msg
-            ;((echo addrs i msg)
-            (recur (conj msgs msg))
-            (recur msgs)))))))
+          (when msg
+            (echo addrs i msg))
+          (recur (conj msgs msg)))))))
 
 (defn -main
   [id_str r_str]
