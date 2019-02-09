@@ -31,16 +31,16 @@
 
 (defn echo
   [addrs id new]
-  (pp/pprint "called echo")
   (when (= (:owner new) (:sender new))
     (obroadcast addrs (assoc new :sender id))))
 
 (defn terminate?
   [n msgs]
-  (pp/pprint {:n n :msgs msgs})
-  (let [freq (frequencies (map :value msgs))]
-    (first (filter (fn [x] (>= (f-1 n) (nth x 1)))
-                   freq))))
+  (let [freq (frequencies (map :value msgs))
+        result (first (filter (fn [x] (>= (f-1 n) (nth x 1)))
+                              freq))]
+    (pp/pprint result)
+    result))
 
 (defn value
   [n msgs]
