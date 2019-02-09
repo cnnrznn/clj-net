@@ -39,7 +39,7 @@
   [addrs msgs]
   (let [freq (frequencies (map :value msgs))]
     (pp/pprint freq)
-    (first (filter (fn [x] (>= (f-1 addrs) (x freq)))
+    (first (filter (fn [x] (>= (f-1 addrs) (nth x 1)))
                    freq))))
 
 (defn value
