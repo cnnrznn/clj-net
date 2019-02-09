@@ -42,7 +42,7 @@
       (let [msg (validate msgs (orecv))]
         (case msg
           nil (recur msgs)
-          (recur (conj msgs msg))))))
+          (recur (conj msgs msg)))))))
 
 (defn -main
   [id_str r_str]
