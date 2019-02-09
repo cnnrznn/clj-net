@@ -20,7 +20,6 @@
 
 (defn validate
   [round msgs new]
-  (pp/pprint new)
   (let [test_r (not= round (:round new))
         match_s (mfilter msgs :sender (:sender new))
         match_o (mfilter match_s :owner (:owner new))
@@ -38,9 +37,7 @@
 (defn terminate?
   [n msgs]
   (let [freq (frequencies (map :value msgs))]
-    (pp/pprint freq)
-    (first (filter (fn [x] (pp/pprint x)
-                           (>= (f-1 n) (nth x 1)))
+    (first (filter (fn [x] (>= (f-1 n) (nth x 1)))
                    freq))))
 
 (defn value
@@ -56,6 +53,7 @@
     (zcast addrs i r))
   ([addrs i r]
     (loop [msgs #{}]
+      (pp/pprint msgs)
       (if (terminate? (count addrs) msgs)
         (value (count addrs) msgs)
         (let [msg (validate r msgs (orecv))]
