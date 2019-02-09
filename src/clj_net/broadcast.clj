@@ -20,6 +20,7 @@
 
 (defn validate
   [round msgs new]
+  (pp/pprint new)
   (let [test_r (= round (:round new))
         match_s (mfilter msgs :sender (:sender new))
         match_o (mfilter match_s :owner (:owner new))
