@@ -28,7 +28,7 @@
       nil
       new)))
 
-(defn hanldle-new
+(defn handle-new
   [addrs id new]
   (when (= (:owner new) (:sender new))
     (obroadcast addrs (assoc new :sender id))))
