@@ -37,13 +37,10 @@
 (defn terminate?
   [n msgs]
   (let [freq (frequencies (map :value msgs))
-        result (first (filter (fn [x] (>= (nth x 1) (f-1 n)))
-                              freq))]
+        elem (first (filter (fn [x] (>= (nth x 1) (f-1 n)))
+                              freq))
+        result (nth elem 0 nil)]
     result))
-
-(defn value
-  [n msgs]
-  (nth (terminate? n msgs) 0 "HUUUUGE ERROR"))
 
 (defn zcast
   ([addrs i r v]
@@ -56,7 +53,7 @@
     (loop [msgs #{}]
       (pp/pprint msgs)
       (if (terminate? (count addrs) msgs)
-        (value (count addrs) msgs)
+        (terminate? (count addrs) msgs)
         (let [msg (validate r msgs (orecv))]
           (when msg
             (echo addrs i msg))
