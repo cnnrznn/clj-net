@@ -20,7 +20,7 @@
 
 (defn validate
   [round msgs new]
-  (pp/pprint "new" new)
+  (pp/pprint new)
   (let [test_r (not= round (:round new))
         match_s (mfilter msgs :sender (:sender new))
         match_o (mfilter match_s :owner (:owner new))
@@ -38,7 +38,7 @@
 (defn terminate?
   [addrs msgs]
   (let [freq (frequencies (map :value msgs))]
-    (pp/pprint "freq" freq)
+    (pp/pprint freq)
     (first (filter (fn [x] (>= (f-1 addrs) (x freq)))
                    freq))))
 
