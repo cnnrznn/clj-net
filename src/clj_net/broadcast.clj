@@ -59,10 +59,10 @@
       (if (terminate? addrs msgs)
         (value msgs)
         (let [msg (validate r msgs (orecv))]
-          (when msg
-            (echo addrs i msg)
-            (recur (conj msgs msg)))
-          (recur msgs))))))
+          (if msg
+            ((echo addrs i msg)
+             (recur (conj msgs msg)))
+            (recur msgs)))))))
 
 (defn -main
   [id_str r_str]
