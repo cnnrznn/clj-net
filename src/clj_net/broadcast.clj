@@ -19,19 +19,30 @@
           msgs))
 
 (defn validate
-  [msgs new]
-  (let [match_r (mfilter msgs :round (:round new))
-        match_s (mfilter match_r :sender (:sender new))
+  [round msgs new]
+  (let [test_r (= round (:round new))
+        match_s (mfilter msgs :sender (:sender new))
         match_o (mfilter match_s :owner (:owner new))
         matches match_o]
-    (if (>= (count matches) 1)
+    (if (or test_r
+            (>= (count matches) 1))
       nil
       new)))
 
-(defn handle-new
+(defn echo
   [addrs id new]
   (when (= (:owner new) (:sender new))
     (obroadcast addrs (assoc new :sender id))))
+
+(defn terminate?
+  [addrs msgs]
+  (let [freq (frequencies (map :value msgs))]
+    (first (filter (fn [x] (>= (f-1 addrs) (x freq)))
+                   freq))))
+
+(defn value
+  [msgs]
+  (:value (terminate? msgs)))
 
 (defn zcast
   ([addrs i r v]
@@ -44,10 +55,12 @@
     (loop [msgs #{}]
       (pp/pprint msgs)
       (pp/pprint "")
-      (let [msg (validate msgs (orecv))]
-        (when msg
-          (handle-new addrs i msg))
-        (recur (conj msgs msg))))))
+      (if (terminate? addrs msgs)
+        (value msgs)
+        (let [msg (validate r msgs (orecv))]
+          (when msg
+            (echo addrs i msg))
+          (recur (conj msgs msg))))))
 
 (defn -main
   [id_str r_str]
