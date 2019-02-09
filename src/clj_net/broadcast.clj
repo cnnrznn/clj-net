@@ -60,7 +60,7 @@
         (let [msg (validate r msgs (orecv))]
           (when msg
             (echo addrs i msg))
-          (recur (conj msgs msg))))))
+          (recur (conj msgs msg)))))))
 
 (defn -main
   [id_str r_str]
