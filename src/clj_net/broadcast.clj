@@ -37,7 +37,7 @@
 (defn terminate?
   [n msgs]
   (let [freq (frequencies (map :value msgs))
-        result (first (filter (fn [x] (>= (f-1 n) (nth x 1)))
+        result (first (filter (fn [x] (>= (nth x 1) (f-1 n)))
                               freq))]
     (pp/pprint result)
     result))
