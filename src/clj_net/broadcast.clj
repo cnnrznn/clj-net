@@ -45,7 +45,7 @@
       (pp/pprint msgs)
       (pp/pprint "")
       (let [msg (validate msgs (orecv))]
-        (handle-new msgs msg)
+        (handle-new addrs i msg)
         (recur (conj msgs msg))))))
 
 (defn -main
