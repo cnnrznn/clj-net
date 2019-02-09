@@ -69,6 +69,7 @@
                {:host "100.10.10.11" :port 3333}
                {:host "100.10.10.12" :port 3333}
                {:host "100.10.10.13" :port 3333}]]
-    (if (= 0 id)
-      (zcast addrs id r "foo")
-      (zcast addrs id r))))
+    (pp/pprint
+      (if (= 0 id)
+        (zcast addrs id r "foo")
+        (zcast addrs id r)))))
