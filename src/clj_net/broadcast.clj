@@ -36,6 +36,7 @@
 
 (defn terminate?
   [n msgs]
+  (pp/pprint {:n n :msgs msgs})
   (let [freq (frequencies (map :value msgs))]
     (first (filter (fn [x] (>= (f-1 n) (nth x 1)))
                    freq))))
@@ -53,7 +54,6 @@
     (zcast addrs i r))
   ([addrs i r]
     (loop [msgs #{}]
-      (pp/pprint msgs)
       (if (terminate? (count addrs) msgs)
         (value (count addrs) msgs)
         (let [msg (validate r msgs (orecv))]
