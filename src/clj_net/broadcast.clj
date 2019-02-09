@@ -31,6 +31,7 @@
 
 (defn echo
   [addrs id new]
+  (pp/pprint "called echo")
   (when (= (:owner new) (:sender new))
     (obroadcast addrs (assoc new :sender id))))
 
