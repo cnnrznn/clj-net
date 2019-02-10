@@ -37,10 +37,13 @@
 (defn terminate?
   [n msgs]
   (let [freq (frequencies (map :value msgs))
-        elem (first (filter (fn [x] (>= (nth x 1) (f-1 n)))
+        elem (first (filter (fn [x] (>= (nth x 1) (n-f n)))
                               freq))
         result (nth elem 0 nil)]
-    result))
+    (if (and (= nil result)
+             (>= (count msgs) (n-f n)))
+      "Dishonest leader"
+      result)))
 
 (defn zcast
   ([addrs i r v]
