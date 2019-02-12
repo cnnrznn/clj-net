@@ -56,7 +56,7 @@
   [addrs msgs]
   (let [proceed (or (>= (count (echo msgs)) (n-f (count addrs)))
                     (>= (count (ready msgs)) (f-1 (count addrs))))]
-    (if proceed
+    (if proceedm
       msgs
       (recur addrs (conj msgs (validate msgs (orecv)))))))
 
@@ -70,7 +70,7 @@
 (defn accept
   [msgs]
   (let [msg (first (ready msgs))]
-    (:v msg)))
+    (:v msg)))m
 
 (defn bracha-broadcast
   ([i addrs obj]

@@ -42,7 +42,7 @@
         result (nth elem 0 nil)]
     (if (and (= nil result)
              (>= (count msgs) (n-f n)))
-      "Dishonest leader"
+      "Byzantine generals detected!"
       result)))
 
 (defn zcast
