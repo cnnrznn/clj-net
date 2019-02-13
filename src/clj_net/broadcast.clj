@@ -70,21 +70,21 @@
   (:v (first (ready msgs))))
 
 (defn bracha-broadcast
-  ([i addrs obj]
+  ([pid addrs obj]
     (obroadcast addrs obj)
-    (bracha-broadcast i addrs))
-  ([i addrs]
+    (bracha-broadcast pid addrs))
+  ([pid addrs]
     (let [m1 (phase1 addrs)
           _ (pp/pprint m1)
           _ (obroadcast addrs {:type "echo"
                                :v (:v (first m1))
-                               :sender i
+                               :sender pid
                                :r 0})
           m2 (phase2 addrs m1)
           _ (pp/pprint m2)
           _ (obroadcast addrs {:type "ready"
                                :v (:v (first m2))
-                               :sender i
+                               :sender pid
                                :r 0})
           m3 (phase3 addrs m2)
           _ (pp/pprint m3)]
