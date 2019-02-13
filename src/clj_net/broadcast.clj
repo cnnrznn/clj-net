@@ -32,7 +32,7 @@
 
 (defn validate
   [msgs new]
-  (let [match_id (mfilter msgs :id (:id new))
+  (let [match_id (mfilter msgs :sender (:sender new))
         match_ty (mfilter match_id :type (:type new))
         match_r  (mfilter match_ty :r (:r new))
         matches match_r]
@@ -78,13 +78,13 @@
           _ (pp/pprint m1)
           _ (obroadcast addrs {:type "echo"
                                :v (:v (first m1))
-                               :id i
+                               :sender i
                                :r 0})
           m2 (phase2 addrs m1)
           _ (pp/pprint m2)
           _ (obroadcast addrs {:type "ready"
                                :v (:v (first m2))
-                               :id i
+                               :sender i
                                :r 0})
           m3 (phase3 addrs m2)
           _ (pp/pprint m3)]
@@ -101,6 +101,6 @@
       (if (= 0 i)
         (bracha-broadcast i addrs {:type "initial"
                                    :v v
-                                   :id i
+                                   :sender i
                                    :r 0})
         (bracha-broadcast i addrs)))))
