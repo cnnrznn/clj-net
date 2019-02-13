@@ -56,7 +56,7 @@
   [addrs msgs]
   (let [proceed (or (>= (count (echo msgs)) (n-f (count addrs)))
                     (>= (count (ready msgs)) (f-1 (count addrs))))]
-    (if proceedm
+    (if proceed
       msgs
       (recur addrs (conj msgs (validate msgs (orecv)))))))
 
