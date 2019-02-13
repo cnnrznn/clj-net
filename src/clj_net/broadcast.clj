@@ -18,59 +18,91 @@
   (filter (fn [x] (= (k x) v))
           msgs))
 
+(defn initial
+  [msgs]
+  (mfilter msgs :type "initial"))
+
+(defn echo
+  [msgs]
+  (mfilter msgs :type "echo"))
+
+(defn ready
+  [msgs]
+  (mfilter msgs :type "ready"))
+
 (defn validate
-  [round msgs new]
-  (let [test_r (not= round (:round new))
-        match_s (mfilter msgs :sender (:sender new))
-        match_o (mfilter match_s :owner (:owner new))
-        matches match_o]
-    (if (or test_r
-            (>= (count matches) 1))
+  [msgs new]
+  (let [match_id (mfilter msgs :id (:id new))
+        match_ty (mfilter match_id :type (:type new))
+        match_r  (mfilter match_ty :r (:r new))
+        matches match_r]
+    (if (or (>= (count matches) 1)
+            (and (= "initial" (:type new))
+                 (not= 0 (:id new))))
       nil
       new)))
 
-(defn echo
-  [addrs id new]
-  (when (= (:owner new) (:sender new))
-    (obroadcast addrs (assoc new :sender id))))
+(defn phase1
+  [addrs]
+  (loop [msgs #{}]
+    (let [proceed (or (>= (count (initial msgs)) 1)
+                      (>= (count (echo msgs)) (n-f (count addrs)))
+                      (>= (count (ready msgs)) (f-1 (count addrs))))]
+      (if proceed
+        msgs
+        (recur (conj msgs (validate msgs (orecv))))))))
 
-(defn terminate?
-  [n msgs]
-  (let [freq (frequencies (map :value msgs))
-        elem (first (filter (fn [x] (>= (nth x 1) (n-f n)))
-                              freq))
-        result (nth elem 0 nil)]
-    (if (and (= nil result)
-             (>= (count msgs) (n-f n)))
-      "Byzantine generals detected!"
-      result)))
+(defn phase2
+  [addrs msgs]
+  (let [proceed (or (>= (count (echo msgs)) (n-f (count addrs)))
+                    (>= (count (ready msgs)) (f-1 (count addrs))))]
+    (if proceedm
+      msgs
+      (recur addrs (conj msgs (validate msgs (orecv)))))))
 
-(defn zcast
-  ([addrs i r v]
-    (obroadcast addrs {:owner i
-                       :sender i
-                       :round r
-                       :value v})
-    (zcast addrs i r))
-  ([addrs i r]
-    (loop [msgs #{}]
-      (pp/pprint msgs)
-      (if (terminate? (count addrs) msgs)
-        (terminate? (count addrs) msgs)
-        (let [msg (validate r msgs (orecv))]
-          (when msg
-            (echo addrs i msg))
-          (recur (conj msgs msg)))))))
+(defn phase3
+  [addrs msgs]
+  (let [proceed (>= (count (ready msgs)) (n-f (count addrs)))]
+    (if proceed
+      msgs
+      (recur addrs (conj msgs (validate msgs (orecv)))))))
+
+(defn accept
+  [msgs]
+  (:v (first (ready msgs))))
+
+(defn bracha-broadcast
+  ([i addrs obj]
+    (obroadcast addrs obj)
+    (bracha-broadcast i addrs))
+  ([i addrs]
+    (let [m1 (phase1 addrs)
+          _ (pp/pprint m1)
+          _ (obroadcast addrs {:type "echo"
+                               :v (:v (first m1))
+                               :id i
+                               :r 0})
+          m2 (phase2 addrs m1)
+          _ (pp/pprint m2)
+          _ (obroadcast addrs {:type "ready"
+                               :v (:v (first m2))
+                               :id i
+                               :r 0})
+          m3 (phase3 addrs m2)
+          _ (pp/pprint m3)]
+      (accept m3))))
 
 (defn -main
-  [id_str r_str]
-  (let [id (util/parse-int id_str)
-        r (util/parse-int r_str)
-        addrs [{:host "100.10.10.10" :port 3333}
-               {:host "100.10.10.11" :port 3333}
-               {:host "100.10.10.12" :port 3333}
-               {:host "100.10.10.13" :port 3333}]]
-    (pp/pprint
-      (if (= 0 id)
-        (zcast addrs id r "foo")
-        (zcast addrs id r)))))
+  ([si v]
+    (let [addrs [{:host "100.10.10.10" :port 3333}
+                 {:host "100.10.10.11" :port 3333}
+                 {:host "100.10.10.12" :port 3333}
+                 {:host "100.10.10.13" :port 3333}]
+          i (util/parse-int si)]
+      (pp/pprint (format "I am process %d" i))
+      (if (= 0 i)
+        (bracha-broadcast i addrs {:type "initial"
+                                   :v v
+                                   :id i
+                                   :r 0})
+        (bracha-broadcast i addrs)))))
