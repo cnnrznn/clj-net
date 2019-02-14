@@ -119,4 +119,5 @@
                            :sender i
                            :initiator 0
                            :round 0}))
-      (bracha-broadcast i addrs 0 0))))
+      (let [broadcast (broadcast-func 0 0)]
+        broadcast i addrs))))
