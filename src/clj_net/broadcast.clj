@@ -34,13 +34,13 @@
 (defn echo
   [msgs]
   (-> msgs
-      (mfilter msgs :type "echo")
+      (mfilter :type "echo")
       (majority-value)))
 
 (defn ready
   [msgs]
   (-> msgs
-      (mfilter msgs :type "ready")
+      (mfilter :type "ready")
       (majority-value)))
 
 (defn accept
