@@ -18,17 +18,30 @@
   (filter (fn [x] (= (k x) v))
           msgs))
 
-(defn initial
+(defn majority-value
   [msgs]
-  (mfilter msgs :type "initial"))
+  (let [valfreq (frequencies (map :v msgs))
+        _ (pp/pprint valfreq)]
+    ;(filter (fn [x] (= target (:v x))) msgs)))
+    msgs))
+
+(defn initial
+  [msgs initiator]
+  (-> msgs
+      (mfilter :type "initial")
+      (mfilter :initiator initiator)))
 
 (defn echo
   [msgs]
-  (mfilter msgs :type "echo"))
+  (-> msgs
+      (mfilter msgs :type "echo")
+      (majority-value)))
 
 (defn ready
   [msgs]
-  (mfilter msgs :type "ready"))
+  (-> msgs
+      (mfilter msgs :type "ready")
+      (majority-value)))
 
 (defn accept
   [msgs]
@@ -49,11 +62,11 @@
         new))))
 
 (defn phase1-func
-  [validate]
+  [validate initiator]
   (fn
     [addrs]
     (loop [msgs #{}]
-      (let [proceed (or (>= (count (initial msgs)) 1)
+      (let [proceed (or (>= (count (initial msgs initiator)) 1)
                         (>= (count (echo msgs)) (n-f (count addrs)))
                         (>= (count (ready msgs)) (f-1 (count addrs))))]
         (if proceed
@@ -82,7 +95,7 @@
 (defn broadcast-func
   [initiator round]
   (let [validate (validate-func initiator round)
-        phase1 (phase1-func validate)
+        phase1 (phase1-func validate initiator)
         phase2 (phase2-func validate)
         phase3 (phase3-func validate)]
     (fn
