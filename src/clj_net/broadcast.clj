@@ -58,7 +58,7 @@
                         (>= (count (ready msgs)) (f-1 (count addrs))))]
         (if proceed
           msgs
-          (recur (conj msgs (validate msgs (orecv))))))))
+          (recur (conj msgs (validate msgs (orecv)))))))))
 
 (defn phase2-func
   [validate]
