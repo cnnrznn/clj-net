@@ -30,65 +30,80 @@
   [msgs]
   (mfilter msgs :type "ready"))
 
-(defn validate
-  [msgs new]
-  (let [matches (-> msgs
-                   (mfilter :sender (:sender new))
-                   (mfilter :type (:type new))
-                   (mfilter :round (:round new)))]
-    (if (>= (count matches) 1)
-      nil
-      new)))
-
-(defn phase1
-  [addrs]
-  (loop [msgs #{}]
-    (let [proceed (or (>= (count (initial msgs)) 1)
-                      (>= (count (echo msgs)) (n-f (count addrs)))
-                      (>= (count (ready msgs)) (f-1 (count addrs))))]
-      (if proceed
-        msgs
-        (recur (conj msgs (validate msgs (orecv))))))))
-
-(defn phase2
-  [addrs msgs]
-  (let [proceed (or (>= (count (echo msgs)) (n-f (count addrs)))
-                    (>= (count (ready msgs)) (f-1 (count addrs))))]
-    (if proceed
-      msgs
-      (recur addrs (conj msgs (validate msgs (orecv)))))))
-
-(defn phase3
-  [addrs msgs]
-  (let [proceed (>= (count (ready msgs)) (n-f (count addrs)))]
-    (if proceed
-      msgs
-      (recur addrs (conj msgs (validate msgs (orecv)))))))
-
 (defn accept
   [msgs]
   (:v (first (ready msgs))))
 
-(defn bracha-broadcast
-  ([pid addrs obj]
-    (obroadcast addrs obj)
-    (bracha-broadcast pid addrs))
-  ([pid addrs]
-    (let [m1 (phase1 addrs)
-          _ (pp/pprint m1)
-          _ (obroadcast addrs {:type "echo"
-                               :v (:v (first m1))
-                               :sender pid
-                               :round 0})
-          m2 (phase2 addrs m1)
-          _ (pp/pprint m2)
-          _ (obroadcast addrs {:type "ready"
-                               :v (:v (first m2))
-                               :sender pid
-                               :round 0})
-          m3 (phase3 addrs m2)
-          _ (pp/pprint m3)]
-      (accept m3))))
+(defn validate-func
+  [initiator round]
+  (fn
+    [msgs new]
+    (let [matches (-> msgs
+                     (mfilter :sender (:sender new))
+                     (mfilter :type (:type new)))
+          valid (and (= initiator (:initiator new))
+                     (= round (:round new)))]
+      (if (or (not valid)
+              (>= (count matches) 1))
+        nil
+        new))))
+
+(defn phase1-func
+  [validate]
+  (fn
+    [addrs]
+    (loop [msgs #{}]
+      (let [proceed (or (>= (count (initial msgs)) 1)
+                        (>= (count (echo msgs)) (n-f (count addrs)))
+                        (>= (count (ready msgs)) (f-1 (count addrs))))]
+        (if proceed
+          msgs
+          (recur (conj msgs (validate msgs (orecv))))))))
+
+(defn phase2-func
+  [validate]
+  (fn
+    [addrs msgs]
+    (let [proceed (or (>= (count (echo msgs)) (n-f (count addrs)))
+                      (>= (count (ready msgs)) (f-1 (count addrs))))]
+      (if proceed
+        msgs
+        (recur addrs (conj msgs (validate msgs (orecv))))))))
+
+(defn phase3-func
+  [validate]
+  (fn
+    [addrs msgs]
+    (let [proceed (>= (count (ready msgs)) (n-f (count addrs)))]
+      (if proceed
+        msgs
+        (recur addrs (conj msgs (validate msgs (orecv))))))))
+
+(defn broadcast-func
+  [initiator round]
+  (let [validator (validator-func initiator round)
+        phase1 (phase1-func validator)
+        phase2 (phase2-func validator)
+        phase3 (phase3-func validator)]
+    (fn
+      [pid addrs]
+        (let [m1 (phase1 addrs)
+              _ (pp/pprint m1)
+              _ (obroadcast addrs {:type "echo"
+                                   :v (:v (first m1))
+                                   :sender pid
+                                   :initiator initiator
+                                   :round round})
+              m2 (phase2 addrs m1)
+              _ (pp/pprint m2)
+              _ (obroadcast addrs {:type "ready"
+                                   :v (:v (first m2))
+                                   :sender pid
+                                   :initiator initiator
+                                   :round round})
+              m3 (phase3 addrs m2)
+              _ (pp/pprint m3)]
+          (accept m3)))))
 
 (defn -main
   ([si v]
@@ -98,9 +113,10 @@
                  {:host "100.10.10.13" :port 3333}]
           i (util/parse-int si)]
       (pp/pprint (format "I am process %d" i))
-      (if (= 0 i)
-        (bracha-broadcast i addrs {:type "initial"
-                                   :v v
-                                   :sender i
-                                   :round 0})
-        (bracha-broadcast i addrs)))))
+      (when (= 0 i)
+        (obroadcast addrs {:type "initial"
+                           :v v
+                           :sender i
+                           :initiator 0
+                           :round 0}))
+      (bracha-broadcast i addrs 0 0))))
