@@ -81,10 +81,10 @@
 
 (defn broadcast-func
   [initiator round]
-  (let [validator (validator-func initiator round)
-        phase1 (phase1-func validator)
-        phase2 (phase2-func validator)
-        phase3 (phase3-func validator)]
+  (let [validate (validate-func initiator round)
+        phase1 (phase1-func validate)
+        phase2 (phase2-func validate)
+        phase3 (phase3-func validate)]
     (fn
       [pid addrs]
         (let [m1 (phase1 addrs)
