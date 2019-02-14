@@ -120,4 +120,4 @@
                            :initiator 0
                            :round 0}))
       (let [broadcast (broadcast-func 0 0)]
-        broadcast i addrs))))
+        (broadcast i addrs)))))
