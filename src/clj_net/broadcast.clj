@@ -20,7 +20,12 @@
 
 (defn majority-value
   [msgs]
-  (let [valfreq (frequencies (map :v msgs))
+  (let [valfreq (->> msgs
+                     (map :v)
+                     (frequencies)
+                     (vec)
+                     (sort-by second)
+                     (reverse))
         _ (pp/pprint valfreq)]
     ;(filter (fn [x] (= target (:v x))) msgs)))
     msgs))
