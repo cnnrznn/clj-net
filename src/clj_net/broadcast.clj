@@ -27,8 +27,7 @@
                     (sort-by second)
                     (reverse)
                     (first)
-                    (first))
-        _ (pp/pprint valfreq)]
+                    (first))]
     (filter (fn [x] (= target (:v x))) msgs)))
 
 (defn initial
