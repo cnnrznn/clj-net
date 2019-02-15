@@ -20,15 +20,16 @@
 
 (defn majority-value
   [msgs]
-  (let [valfreq (->> msgs
-                     (map :v)
-                     (frequencies)
-                     (vec)
-                     (sort-by second)
-                     (reverse))
+  (let [target (->> msgs
+                    (map :v)
+                    (frequencies)
+                    (vec)
+                    (sort-by second)
+                    (reverse)
+                    (first)
+                    (first))
         _ (pp/pprint valfreq)]
-    ;(filter (fn [x] (= target (:v x))) msgs)))
-    msgs))
+    (filter (fn [x] (= target (:v x))) msgs)))
 
 (defn initial
   [msgs initiator]
