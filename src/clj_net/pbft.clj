@@ -4,23 +4,25 @@
                     [util :as u]]))
 
 (defn accept-pp?
-  [view log msg]
+  [view seqn log msg]
   (pprint msg)
   (and (= view (:view msg))
+       (= seqn (:seqn msg))
        (< (count (-> log
                      (u/mfilter :view (:view msg))
-                     (u/mfilter :seq (:seq msg))
+                     (u/mfilter :seqn (:seqn msg))
                      (u/mfilter :type "pre-prepare")))
            1)))
 
 (defn prepare
   [pid addrs view seqn log]
-  (pprint "Done!"))
+  (pprint "Done!")
+  log)
 
 (defn pre-prepare
   ([pid addrs view seqn log]            ; listen for pre-prepare
    (let [message (orecv)
-         accept? (accept-pp? view log message)]
+         accept? (accept-pp? view seqn log message)]
      (if accept?
        (prepare pid addrs view seqn (conj log message))
        (pprint "FATAL: received bad pre-prepare"))))
@@ -28,7 +30,7 @@
    (let [message {:type "pre-prepare"
                   :request request
                   :view view
-                  :seq seqn
+                  :seqn seqn
                   :sender pid}
          log (conj log message)
          dst (u/vec-remove addrs pid)]
