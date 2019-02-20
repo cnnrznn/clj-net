@@ -19,7 +19,7 @@
 (defn pre-prepare
   ([pid addrs view seqn log]            ; listen for pre-prepare
    (let [message (orecv)
-         accept? (accept-pp? view log)]
+         accept? (accept-pp? view log message)]
      (if accept?
        ((conj log message)
         (prepare pid addrs view seqn log))
