@@ -12,6 +12,10 @@
                      (u/mfilter :type :pre-prepare)))
            1)))
 
+(defn prepare
+  [pid addrs view seqn log]
+  (pprint "Done!"))
+
 (defn pre-prepare
   ([pid addrs view seqn log]            ; listen for pre-prepare
    (let [message (orecv)
@@ -29,10 +33,6 @@
          dst (u/vec-remove addrs pid)]
      (obroadcast dst message)
      (prepare pid addrs view seqn (conj log message)))))
-
-(defn prepare
-  [pid addrs view seqn log]
-  (pprint "Done!"))
 
 (defn pbft
   [pid addrs]
