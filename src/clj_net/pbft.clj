@@ -22,8 +22,7 @@
    (let [message (orecv)
          accept? (accept-pp? view log message)]
      (if accept?
-       ((conj log message)
-        (prepare pid addrs view seqn log))
+       (prepare pid addrs view seqn (conj log message))
        (pprint "FATAL: received bad pre-prepare"))))
   ([pid addrs view seqn log request]    ; broadcast pre-prepare
    (let [message {:type "pre-prepare"
