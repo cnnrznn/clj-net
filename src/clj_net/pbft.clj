@@ -5,6 +5,7 @@
 
 (defn accept-pp?
   [view log msg]
+  (pprint msg)
   (and (= view (:view msg))
        (< (count (-> log
                      (u/mfilter :view (:view msg))
