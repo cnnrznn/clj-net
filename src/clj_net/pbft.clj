@@ -1,7 +1,7 @@
 (ns clj-net.pbft
   (require [clojure.pprint :refer [pprint]]
-           [clj-net [core :refer :all
-                    [util :as u]]]))
+           [clj-net [core :refer :all]
+                    [util :as u]]))
 
 (defn accept-pp?
   [view log msg]
