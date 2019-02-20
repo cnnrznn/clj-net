@@ -20,9 +20,10 @@
   ([pid addrs view seqn log]            ; listen for pre-prepare
    (let [message (orecv)
          accept? (accept-pp? view log)]
-     (when accept?
-       (conj log message))
-     (prepare pid addrs view seqn log)))
+     (if accept?
+       ((conj log message)
+        (prepare pid addrs view seqn log))
+       (pprint "FATAL: received bad pre-prepare"))))
   ([pid addrs view seqn log request]    ; broadcast pre-prepare
    (let [message {:type :pre-prepare
                   :request request
@@ -43,11 +44,9 @@
         log []]
     (if leader?
                                 ; for now, randomly generate event
-      ;(pre-prepare pid addrs view seqn log "the request")
+      (pre-prepare pid addrs view seqn log "the request")
                                 ; wait for leader with timeout
-      ;(pre-prepare pid addrs view seqn log))))
-      (pprint "Leader!")
-      (pprint "Not the leader!"))))
+      (pre-prepare pid addrs view seqn log))))
 
 (defn -main
   [si]
