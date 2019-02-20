@@ -10,7 +10,7 @@
        (< (count (-> log
                      (u/mfilter :view (:view msg))
                      (u/mfilter :seq (:seq msg))
-                     (u/mfilter :type :pre-prepare)))
+                     (u/mfilter :type "pre-prepare")))
            1)))
 
 (defn prepare
@@ -26,7 +26,7 @@
         (prepare pid addrs view seqn log))
        (pprint "FATAL: received bad pre-prepare"))))
   ([pid addrs view seqn log request]    ; broadcast pre-prepare
-   (let [message {:type :pre-prepare
+   (let [message {:type "pre-prepare"
                   :request request
                   :view view
                   :seq seqn
