@@ -39,13 +39,15 @@
   (let [view 0
         seqn 0
         N (count addrs)
-        leader? (mod view N)
+        leader? (= (mod view N) pid)
         log []]
     (if leader?
                                 ; for now, randomly generate event
-      (pre-prepare pid addrs view seqn log "the request")
+      ;(pre-prepare pid addrs view seqn log "the request")
                                 ; wait for leader with timeout
-      (pre-prepare pid addrs view seqn log))))
+      ;(pre-prepare pid addrs view seqn log))))
+      (pprint "Leader!")
+      (pprint "Not the leader!"))))
 
 (defn -main
   [si]
