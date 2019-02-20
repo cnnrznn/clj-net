@@ -1,15 +1,15 @@
 (ns clj-net.pbft
   (require [clojure.pprint :refer [pprint]]
            [clj-net [core :refer :all
-                    [util :as u :refer [mfilter]]]]))
+                    [util :as u]]]))
 
 (defn accept-pp?
   [view log msg]
   (and (= view (:view msg))
        (>= (count (-> log
-                      (mfilter :view (:view msg))
-                      (mfilter :seq (:seq msg))
-                      (mfilter :type :pre-prepare)))
+                      (u/mfilter :view (:view msg))
+                      (u/mfilter :seq (:seq msg))
+                      (u/mfilter :type :pre-prepare)))
            1)))
 
 (defn pre-prepare
