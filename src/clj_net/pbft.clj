@@ -6,10 +6,10 @@
 (defn accept-pp?
   [view log msg]
   (and (= view (:view msg))
-       (>= (count (-> log
-                      (u/mfilter :view (:view msg))
-                      (u/mfilter :seq (:seq msg))
-                      (u/mfilter :type :pre-prepare)))
+       (< (count (-> log
+                     (u/mfilter :view (:view msg))
+                     (u/mfilter :seq (:seq msg))
+                     (u/mfilter :type :pre-prepare)))
            1)))
 
 (defn pre-prepare
@@ -53,6 +53,6 @@
                {:host "100.10.10.11" :port 3333}
                {:host "100.10.10.12" :port 3333}
                {:host "100.10.10.13" :port 3333}]
-        i (u/parse-int si)]
-    (pprint (format "I am process %d" i))
+        pid (u/parse-int si)]
+    (pprint (format "I am process %d" pid))
     (pbft pid addrs)))
