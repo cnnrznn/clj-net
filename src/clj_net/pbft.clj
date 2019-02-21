@@ -23,21 +23,18 @@
   log)
 
 (defn pre-prepare
-  ([pid addrs view seqn log]            ; listen for pre-prepare
-   (let [message (orecv)
-         accept? (accept-pp? view seqn log message)]
-     (if accept?
-       (prepare pid addrs view seqn (conj log message))
-       (pprint "FATAL: received bad pre-prepare"))))
-  ([pid addrs view seqn log request]    ; broadcast pre-prepare
-   (let [message {:type "pre-prepare"
-                  :request request
-                  :view view
-                  :seqn seqn
-                  :sender pid}
-         dst (u/vec-remove addrs pid)]
-     (obroadcast dst message)
-     (prepare pid addrs view seqn (conj log message)))))
+  [pid addrs view seqn log]
+  (let [message (orecv)
+        accept? (accept-pp? view seqn log message)]
+    (if accept?
+      (let [prepare_msg {:type "prepare"
+                         :view view
+                         :seqn seqn
+                         :sender pid}
+            log (conj log message)]
+        (obroadcast addrs prepare_msg)
+        (prepare pid addrs view seqn log))
+      (pprint "FATAL: received bad pre-prepare"))))
 
 (defn pbft
   [pid addrs]
@@ -46,11 +43,14 @@
         N (count addrs)
         leader? (= (mod view N) pid)
         log []]
-    (if leader?
-                                ; for now, randomly generate event
-      (pre-prepare pid addrs view seqn log "the request")
-                                ; wait for leader with timeout
-      (pre-prepare pid addrs view seqn log))))
+    (when leader?
+      (let [message {:type "pre-prepare"
+                     :request request
+                     :view view
+                     :seqn seqn
+                     :sender pid}]
+        (obroadcast addrs message)))
+    (pre-prepare pid addrs view seqn log)))
 
 (defn -main
   [si]
