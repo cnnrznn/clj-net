@@ -1,11 +1,14 @@
 (ns clj-net.pbft
   (require [clojure.pprint :refer [pprint]]
+           [clojure.core.async :as async]
            [clj-net [core :refer :all]
                     [util :as u]]))
 
+(def msg-chan (async/chan 128))
+(def tmt-chan (async/chan 128))
+
 (defn accept-pp?
   [view seqn log msg]
-  (pprint msg)
   (and (= view (:view msg))
        (= seqn (:seqn msg))
        (< (count (-> log
@@ -32,7 +35,6 @@
                   :view view
                   :seqn seqn
                   :sender pid}
-         log (conj log message)
          dst (u/vec-remove addrs pid)]
      (obroadcast dst message)
      (prepare pid addrs view seqn (conj log message)))))
@@ -58,4 +60,4 @@
                {:host "100.10.10.13" :port 3333}]
         pid (u/parse-int si)]
     (pprint (format "I am process %d" pid))
-    (pbft pid addrs)))
+    (async/<!! (async/go (pbft pid addrs)))))
