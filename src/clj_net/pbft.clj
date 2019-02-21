@@ -7,10 +7,15 @@
 (def msg-chan (async/chan 128))
 (def tmt-chan (async/chan 128))
 
+(defn leader
+  [view n]
+  (mod view n))
+
 (defn accept-pp?
-  [view seqn log msg]
+  [addrs view seqn log msg]
   (and (= view (:view msg))
        (= seqn (:seqn msg))
+       (= (:sender msg) (leader view (count addrs)))
        (< (count (-> log
                      (u/mfilter :view (:view msg))
                      (u/mfilter :seqn (:seqn msg))
@@ -25,7 +30,7 @@
 (defn pre-prepare
   [pid addrs view seqn log]
   (let [message (orecv)
-        accept? (accept-pp? view seqn log message)]
+        accept? (accept-pp? addrs view seqn log message)]
     (if accept?
       (let [prepare_msg {:type "prepare"
                          :view view
