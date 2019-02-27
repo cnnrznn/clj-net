@@ -16,3 +16,7 @@
   "remove elem in coll"
   [coll pos]
    (vec (concat (subvec coll 0 pos) (subvec coll (inc pos)))))
+
+(defn recv2f
+  [addrs]
+  [])
