@@ -6,4 +6,4 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/data.json "0.2.6"]
                  [org.clojure/core.async "0.4.490"]]
-  :main clj-net.test)
+  :main clj-net.dumbprot)

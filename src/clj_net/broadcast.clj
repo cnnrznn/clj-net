@@ -1,7 +1,7 @@
 (ns clj-net.broadcast
-  (require [clj-net [core :refer :all]
-                    [util :as util :refer [mfilter]]]
-           [clojure.pprint :as pp]))
+  (:require [clj-net [core :refer :all]
+                     [util :as util :refer [mfilter]]]
+            [clojure.pprint :as pp]))
 
 (defn n-f
   [n]

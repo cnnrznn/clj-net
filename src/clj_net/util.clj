@@ -1,4 +1,5 @@
-(ns clj-net.util)
+(ns clj-net.util
+  (:require [clj-net [core :as c]]))
 
 (defn parse-int [s]
    (Integer. (re-find  #"\d+" s )))
@@ -17,6 +18,12 @@
   [coll pos]
    (vec (concat (subvec coll 0 pos) (subvec coll (inc pos)))))
 
-(defn recv2f
+(defn recv2f1
   [addrs]
-  [])
+  (let [n (count addrs)
+        f (quot (- n 1) 3)
+        ff (* 2 f)]
+    (loop [msgs []]
+      (if (> (count msgs) ff)
+        (msgs)
+        (recur (conj msgs (c/orecv)))))))
