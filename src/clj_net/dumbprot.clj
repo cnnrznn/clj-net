@@ -17,7 +17,7 @@
 (defn -main
   [value]
   (dumbprot [{:host "127.0.0.1" :port 3333}
-             {:host "127.0.0.1" :port 1201}
-             {:host "127.0.0.1" :port 1202}
-             {:host "127.0.0.1" :port 1203}]
+             {:host "127.0.0.1" :port 3333}
+             {:host "127.0.0.1" :port 3333}
+             {:host "127.0.0.1" :port 3333}]
             value))
