@@ -1,5 +1,6 @@
 (ns clj-net.util
-  (:require [clj-net [core :as c]]))
+  (:require [clj-net [core :as c]]
+            [clojure.pprint :refer [pprint]]))
 
 (defn parse-int [s]
    (Integer. (re-find  #"\d+" s )))
@@ -27,3 +28,19 @@
       (if (> (count msgs) ff)
         msgs
         (recur (conj msgs (c/orecv)))))))
+
+(defn majority-or
+  [coll alt]
+  (let [n (count coll)
+        most-freq (->> coll
+                       (frequencies)
+                       (vec)
+                       (sort-by second)
+                       (reverse)
+                       (first))
+        enough? (> (/ n 2) (first most-freq))
+        value (first most-freq)]
+    (if enough?
+      value
+      alt)))
+

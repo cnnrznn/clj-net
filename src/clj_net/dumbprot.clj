@@ -4,9 +4,9 @@
                      [core :as c]]))
 
 (defn state-change
+  "Dumb state change. Pick value of majority"
   [v messages]
-  (pprint messages)
-  v)
+  (u/majority-or messages v))
 
 (defn dumbprot
   [addrs v]
@@ -20,4 +20,4 @@
              {:host "127.0.0.1" :port 3333}
              {:host "127.0.0.1" :port 3333}
              {:host "127.0.0.1" :port 3333}]
-            value))
+            (u/parse-int value)))
