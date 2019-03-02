@@ -16,8 +16,8 @@
 
 (defn -main
   [value]
-  (dumbprot [{:host "127.0.0.1" :port 3333}
-             {:host "127.0.0.1" :port 3333}
-             {:host "127.0.0.1" :port 3333}
-             {:host "127.0.0.1" :port 3333}]
+  (dumbprot [{:host "100.10.10.10" :port 3333}
+             {:host "100.10.10.11" :port 3333}
+             {:host "100.10.10.12" :port 3333}
+             {:host "100.10.10.13" :port 3333}]
             (u/parse-int value)))
