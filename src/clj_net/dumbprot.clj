@@ -1,11 +1,14 @@
 (ns clj-net.dumbprot
   (:require [clojure.pprint :refer [pprint]]
             [clj-net [util :as u]
-                     [core :as c]]))
+                     [core :as c]])
+  (:import [java.lang.Thread]))
 
 (defn state-change
   "Dumb state change. Pick value of majority"
   [v messages]
+  (pprint messages)
+  (Thread/sleep 500)
   (u/majority-or messages v))
 
 (defn dumbprot
